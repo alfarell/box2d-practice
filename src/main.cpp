@@ -4,6 +4,8 @@
 #include <SDL3/SDL_main.h>
 #include <box2d/box2d.h>
 
+#include <vector>
+
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 
@@ -20,23 +22,24 @@ float performanceFrequency;
 float accumulatedTime;
 
 SDL_FRect groundRect = {
-    .x = 0.0f,
-    .y = 600.0f,
-    .w = (float)WINDOW_WIDTH,
-    .h = 50.0f,
+    0.0f,
+    600.0f,
+    (float)WINDOW_WIDTH,
+    50.0f,
 };
 
-SDL_FRect entityRect = {
-    .x = 100.0f,
-    .y = 100.0f,
-    .w = 30.0f,
-    .h = 30.0f,
-};
-
+static b2DebugDraw debugDraw;
 static b2WorldDef worldDef;
 static b2WorldId worldId;
-b2BodyId groundId;
-b2BodyId entityId;
+static b2BodyId groundId;
+
+struct Entity {
+    SDL_FRect rect;
+    b2BodyId bodyId;
+    b2ShapeId shapeId;
+};
+
+std::vector<Entity> boxes;
 
 /* This function runs once at startup. */
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
@@ -63,25 +66,38 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     accumulatedTime      = 0.0;
 
     worldDef         = b2DefaultWorldDef();
-    worldDef.gravity = (b2Vec2){.x = 0.0f, .y = 9.8f};
+    worldDef.gravity = b2Vec2{0.0f, 9.8f};
     worldId          = b2CreateWorld(&worldDef);
 
     b2BodyDef groundBodyDef   = b2DefaultBodyDef();
-    groundBodyDef.position    = (b2Vec2){groundRect.x, groundRect.y};
+    groundBodyDef.position    = b2Vec2{groundRect.x + (groundRect.w / 2),
+                                    groundRect.y + (groundRect.h / 2)};
     groundId                  = b2CreateBody(worldId, &groundBodyDef);
-    b2Polygon groundBox       = b2MakeBox(groundRect.w, groundRect.h);
+    b2Polygon groundBox       = b2MakeBox(groundRect.w / 2, groundRect.h / 2);
     b2ShapeDef groundShapeDef = b2DefaultShapeDef();
+    groundShapeDef.material.customColor = 0x00FF0000;
     b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
 
-    b2BodyDef entityDef              = b2DefaultBodyDef();
-    entityDef.type                   = b2_dynamicBody;
-    entityDef.position               = (b2Vec2){entityRect.x, entityRect.y};
-    entityId                         = b2CreateBody(worldId, &entityDef);
-    b2Polygon entityDynamicBox       = b2MakeBox(entityRect.w, entityRect.h);
-    b2ShapeDef entityShapeDef        = b2DefaultShapeDef();
-    entityShapeDef.density           = 1.0f;
-    entityShapeDef.material.friction = 0.3f;
-    b2CreatePolygonShape(entityId, &entityShapeDef, &entityDynamicBox);
+    debugDraw                  = b2DefaultDebugDraw();
+    debugDraw.context          = renderer;
+    debugDraw.drawBounds       = true;
+    debugDraw.drawShapes       = true;
+    debugDraw.useDrawingBounds = true;
+    debugDraw.DrawPolygonFcn   = [](const b2Vec2* vertices, int vertexCount,
+                                  b2HexColor color, void* context) {
+        SDL_Renderer* renderer = (SDL_Renderer*)context;
+        SDL_SetRenderDrawColor(renderer, (color >> 24) & 0xFF,
+                                 (color >> 16) & 0xFF, (color >> 8) & 0xFF,
+                                 color & 0xFF);
+
+        std::vector<SDL_FPoint> sdlVertices;
+        for (int i = 0; i < vertexCount; ++i) {
+            sdlVertices.push_back(SDL_FPoint{vertices[i].x, vertices[i].y});
+        }
+        sdlVertices.push_back(sdlVertices[0]);
+
+        SDL_RenderLines(renderer, sdlVertices.data(), sdlVertices.size());
+    };
 
     return SDL_APP_CONTINUE; /* carry on with the program! */
 }
@@ -92,6 +108,46 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
         return SDL_APP_SUCCESS; /* end the program, reporting success to the OS.
                                  */
     }
+
+    if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
+        switch (event->button.button) {
+            case SDL_BUTTON_LEFT: {
+                SDL_FRect entityRect = {
+                    event->button.x - 15.0f,
+                    event->button.y - 15.0f,
+                    30.0f,
+                    30.0f,
+                };
+
+                b2BodyDef entityDef    = b2DefaultBodyDef();
+                entityDef.gravityScale = 9.8f;
+                entityDef.type         = b2_dynamicBody;
+                entityDef.position     = b2Vec2{entityRect.x, entityRect.y};
+
+                b2BodyId entityId = b2CreateBody(worldId, &entityDef);
+
+                b2Polygon entityDynamicBox =
+                    b2MakeBox(entityRect.w / 2, entityRect.h / 2);
+
+                b2ShapeDef entityShapeDef           = b2DefaultShapeDef();
+                entityShapeDef.density              = 100.0f;
+                entityShapeDef.material.friction    = 1.0f;
+                entityShapeDef.material.restitution = 0.3f;
+                entityShapeDef.material.customColor = 0xFF0F0F00;
+
+                b2ShapeId entityShapeId = b2CreatePolygonShape(
+                    entityId, &entityShapeDef, &entityDynamicBox);
+
+                Entity newEntity = {entityRect, entityId, entityShapeId};
+                boxes.push_back(newEntity);
+
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
     return SDL_APP_CONTINUE; /* carry on with the program! */
 }
 
@@ -100,16 +156,38 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
 
-    SDL_SetRenderDrawColor(renderer, 40, 40, 40, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(renderer, 40, 40, 40, SDL_ALPHA_OPAQUE / 2);
     SDL_RenderFillRect(renderer, &groundRect);
 
-    b2Vec2 entityPosition = b2Body_GetPosition(entityId);
-    b2Rot entityRotation  = b2Body_GetRotation(entityId);
-    float entityAngle     = b2Rot_GetAngle(entityRotation);
-    entityRect.x          = entityPosition.x;
-    entityRect.y          = entityPosition.y;
-    SDL_SetRenderDrawColor(renderer, 0, 0, 255, SDL_ALPHA_OPAQUE);
-    SDL_RenderFillRect(renderer, &entityRect);
+    for (Entity& box : boxes) {
+        b2Vec2 entityPosition = b2Body_GetPosition(box.bodyId);
+        b2Rot entityRotation  = b2Body_GetRotation(box.bodyId);
+        float entityAngle     = b2Rot_GetAngle(entityRotation);
+        box.rect.x            = entityPosition.x;
+        box.rect.y            = entityPosition.y;
+        // SDL_SetRenderDrawColor(renderer, 20, 80, 255, 1);
+        // SDL_RenderFillRect(renderer, &box.rect);
+
+        b2Polygon boxPolygon = b2Shape_GetPolygon(box.shapeId);
+
+        for (int i = 0; i < boxPolygon.count; ++i) {
+            // Rotate the vertex
+            float rotatedX = boxPolygon.vertices[i].x * entityRotation.c -
+                             boxPolygon.vertices[i].y * entityRotation.s;
+            float rotatedY = boxPolygon.vertices[i].x * entityRotation.s +
+                             boxPolygon.vertices[i].y * entityRotation.c;
+
+            // Translate to world position
+            boxPolygon.vertices[i].x = rotatedX + entityPosition.x;
+            boxPolygon.vertices[i].y = rotatedY + entityPosition.y;
+        }
+
+        debugDraw.DrawPolygonFcn(boxPolygon.vertices, boxPolygon.count,
+                                 b2HexColor::b2_colorDarkRed,
+                                 debugDraw.context);
+    }
+
+    b2World_Draw(worldId, &debugDraw);
 
     SDL_RenderPresent(renderer);
 
@@ -119,7 +197,7 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
     accumulatedTime += deltaTime;
 
     while (accumulatedTime >= targetFrameTime) {
-        b2World_Step(worldId, targetFrameTime, 4);
+        b2World_Step(worldId, targetFrameTime, 8);
         accumulatedTime -= targetFrameTime;
     }
 
