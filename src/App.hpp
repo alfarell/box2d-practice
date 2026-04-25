@@ -16,9 +16,7 @@ class App {
    private:
     Window* window;
 
-    SDL_FRect groundRect;
     b2WorldId worldId;
-    b2BodyId groundId;
 
     std::vector<std::unique_ptr<Object>> boxes;
 
@@ -31,6 +29,8 @@ class App {
     App& operator=(const App&) = delete;
 
     bool init();
-    void run();
+    void event(SDL_Event* event);
+    void update();
+    void render();
     void destroy();
 };

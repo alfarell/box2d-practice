@@ -42,6 +42,7 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
     }
 
     Input::Get().Update(event);
+    app.event(event);
 
     /* carry on with the program! */
     return SDL_APP_CONTINUE;
@@ -49,7 +50,8 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
 
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult SDL_AppIterate(void* appstate) {
-    app.run();
+    app.update();
+    app.render();
 
     /* carry on with the program! */
     return SDL_APP_CONTINUE;
