@@ -16,8 +16,9 @@ class Frame {
     double performanceFrequency;
     double accumulatedTime;
 
+    Frame() = default;
+
    public:
-    Frame()  = default;
     ~Frame() = default;
 
     Frame(const Frame&)            = delete;

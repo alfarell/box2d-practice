@@ -29,14 +29,14 @@ class Window {
    public:
     Window() = default;
     Window(const WindowMetadata& metadata);
-    ~Window() = default;
+    ~Window();
 
     Window(const Window&)            = delete;
     Window& operator=(const Window&) = delete;
 
-    static Window& Get();
-
     bool create();
+    void destroy();
+
     SDL_Window* getSDLWindow() const;
     SDL_Renderer* getSDLRenderer() const;
     void setWindowMetadata(const WindowMetadata& newMetadata);

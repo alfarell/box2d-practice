@@ -1,11 +1,10 @@
 #include "Window.hpp"
 
-Window& Window::Get() {
-    static Window instance;
-    return instance;
-}
-
 Window::Window(const WindowMetadata& metadata) : windowMetadata(metadata) {}
+
+Window::~Window() {
+    this->destroy();
+}
 
 bool Window::create() {
     SDL_SetAppMetadata(this->windowMetadata.name, this->windowMetadata.version,
@@ -33,6 +32,17 @@ bool Window::create() {
                                      SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
     return true;
+}
+
+void Window::destroy() {
+    if (this->renderer) {
+        SDL_DestroyRenderer(this->renderer);
+        this->renderer = nullptr;
+    }
+    if (this->window) {
+        SDL_DestroyWindow(this->window);
+        this->window = nullptr;
+    }
 }
 
 SDL_Window* Window::getSDLWindow() const {
