@@ -43,11 +43,15 @@ const b2Polygon Object::getPolygon() const {
     return b2Shape_GetPolygon(this->shapeId);
 }
 
-void Object::update() {
+void Object::onEvent() {
     // Default implementation does nothing
 }
 
-void Object::render() {
+void Object::onUpdate() {
+    // Default implementation does nothing
+}
+
+void Object::onRender() {
     b2Polygon boxPolygon = b2Shape_GetPolygon(this->shapeId);
 
     if (!boxPolygon.count) return;
@@ -55,7 +59,7 @@ void Object::render() {
     b2Vec2 entityPosition      = b2Body_GetPosition(this->bodyId);
     b2Rot entityRotation       = b2Body_GetRotation(this->bodyId);
     b2SurfaceMaterial material = b2Shape_GetSurfaceMaterial(this->shapeId);
-    uint32_t color = material.customColor ? material.customColor : 0xFF0000;
+    uint32_t color = material.customColor ? material.customColor : 0xFF000000;
 
     for (int i = 0; i < boxPolygon.count; ++i) {
         // Rotate the vertex
@@ -80,5 +84,5 @@ void Object::render() {
                            (color >> 16) & 0xFF, (color >> 8) & 0xFF,
                            color & 0xFF);
     SDL_RenderLines(this->renderer, sdlVertices.data(),
-                    (int)sdlVertices.size());
+                    static_cast<unsigned int>(sdlVertices.size()));
 }

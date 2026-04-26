@@ -29,8 +29,8 @@ class App {
     App& operator=(const App&) = delete;
 
     bool init();
-    void event(SDL_Event* event);
-    void update();
-    void render();
-    void destroy();
+    void onEvent(SDL_Event* event);
+    void onUpdate();
+    void onRender();
+    void onDestroy();
 };

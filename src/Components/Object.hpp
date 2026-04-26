@@ -25,8 +25,9 @@ class Object {
     Object(const Object&)            = delete;
     Object& operator=(const Object&) = delete;
 
-    virtual void render();
-    virtual void update();
+    virtual void onEvent();
+    virtual void onUpdate();
+    virtual void onRender();
 
     virtual b2BodyId getBodyId() const;
     virtual b2ShapeId getShapeId() const;

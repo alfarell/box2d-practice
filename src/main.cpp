@@ -42,7 +42,7 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
     }
 
     Input::Get().Update(event);
-    app.event(event);
+    app.onEvent(event);
 
     /* carry on with the program! */
     return SDL_APP_CONTINUE;
@@ -50,8 +50,8 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
 
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult SDL_AppIterate(void* appstate) {
-    app.update();
-    app.render();
+    app.onUpdate();
+    app.onRender();
 
     /* carry on with the program! */
     return SDL_APP_CONTINUE;
@@ -60,6 +60,6 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 /* This function runs once at shutdown. */
 void SDL_AppQuit(void* appstate, SDL_AppResult result) {
     /* SDL will clean up the window/renderer for us. */
-    app.destroy();
+    app.onDestroy();
     window.destroy();
 }

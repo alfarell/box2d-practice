@@ -5,7 +5,7 @@ App::App(Window& window) : window(&window) {}
 App::App(Window* window) : window(window) {}
 
 App::~App() {
-    this->destroy();
+    this->onDestroy();
 }
 
 bool App::init() {
@@ -29,8 +29,8 @@ bool App::init() {
     return true;
 }
 
-void App::event(SDL_Event* event) {
-    SDL_Event* event = Input::Get().Event();
+void App::onEvent(SDL_Event* event) {
+    // SDL_Event* event = Input::Get().Event();
     if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
         switch (event->button.button) {
             case SDL_BUTTON_LEFT: {
@@ -63,7 +63,7 @@ void App::event(SDL_Event* event) {
     }
 }
 
-void App::update() {
+void App::onUpdate() {
     Frame::Get().calculateDeltaTime();
     const auto simulate = [&]() {
         b2World_Step(worldId, Frame::Get().getDeltaTime(), 8);
@@ -71,19 +71,19 @@ void App::update() {
     Frame::Get().accumulateTime(simulate);
 }
 
-void App::render() {
+void App::onRender() {
     SDL_SetRenderDrawColor(window->getSDLRenderer(), 255, 255, 255,
                            SDL_ALPHA_OPAQUE);
     SDL_RenderClear(window->getSDLRenderer());
 
     for (const auto& box : boxes) {
-        box->render();
+        box->onRender();
     }
 
     SDL_RenderPresent(window->getSDLRenderer());
 }
 
-void App::destroy() {
+void App::onDestroy() {
     boxes.clear();
 
     if (this->worldId.generation == b2_nullWorldId.generation &&
