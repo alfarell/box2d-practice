@@ -3,9 +3,15 @@
 #include <SDL3/SDL.h>
 #include <box2d/box2d.h>
 
+#include <string>
 #include <vector>
 
+#include "../System/Color.hpp"
+
 struct ObjectProperties {
+    std::string id;
+    std::string name;
+    std::vector<std::string> tags;
     b2WorldId* worldId;
     b2BodyDef* bodyDef;
 };
@@ -13,6 +19,11 @@ struct ObjectProperties {
 class Object {
    protected:
     SDL_Renderer* renderer = NULL;
+
+    std::string id;
+    std::string name;
+    std::vector<std::string> tags;
+
     b2BodyId bodyId;
     b2ShapeId shapeId;
     b2WorldId* worldId;
@@ -22,12 +33,18 @@ class Object {
     Object(SDL_Renderer* renderer, ObjectProperties properties);
     virtual ~Object() = default;
 
-    Object(const Object&)            = delete;
-    Object& operator=(const Object&) = delete;
-
-    virtual void onEvent();
+    virtual void onEvent(SDL_Event* event);
     virtual void onUpdate();
     virtual void onRender();
+
+    std::string getId() const;
+    std::string getName() const;
+    std::vector<std::string> getTags() const;
+    void setId(const std::string& newId);
+    void setName(const std::string& newName);
+    void addTag(const std::string& tag);
+    void removeTag(const std::string& tag);
+    bool hasTag(const std::string& tag) const;
 
     virtual b2BodyId getBodyId() const;
     virtual b2ShapeId getShapeId() const;

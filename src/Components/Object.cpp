@@ -3,9 +3,47 @@
 Object::Object(SDL_Renderer* renderer) : renderer(renderer) {}
 
 Object::Object(SDL_Renderer* renderer, ObjectProperties properties)
-    : renderer(renderer), worldId(properties.worldId) {
-    b2BodyId newBodyId = b2CreateBody(*worldId, properties.bodyDef);
-    this->bodyId       = newBodyId;
+    : renderer(renderer),
+      worldId(properties.worldId),
+      id(properties.id),
+      name(properties.name),
+      tags(properties.tags) {
+    this->bodyId = b2CreateBody(*worldId, properties.bodyDef);
+}
+
+std::string Object::getId() const {
+    return this->id;
+}
+
+std::string Object::getName() const {
+    return this->name;
+}
+
+std::vector<std::string> Object::getTags() const {
+    return this->tags;
+}
+void Object::setId(const std::string& newId) {
+    this->id = newId;
+}
+
+void Object::setName(const std::string& newName) {
+    this->name = newName;
+}
+
+void Object::addTag(const std::string& tag) {
+    if (!hasTag(tag)) {
+        this->tags.push_back(tag);
+    }
+}
+
+void Object::removeTag(const std::string& tag) {
+    this->tags.erase(std::remove(this->tags.begin(), this->tags.end(), tag),
+                     this->tags.end());
+}
+
+bool Object::hasTag(const std::string& tag) const {
+    return std::find(this->tags.begin(), this->tags.end(), tag) !=
+           this->tags.end();
 }
 
 b2BodyId Object::getBodyId() const {
@@ -43,7 +81,7 @@ const b2Polygon Object::getPolygon() const {
     return b2Shape_GetPolygon(this->shapeId);
 }
 
-void Object::onEvent() {
+void Object::onEvent(SDL_Event* event) {
     // Default implementation does nothing
 }
 
@@ -59,7 +97,8 @@ void Object::onRender() {
     b2Vec2 entityPosition      = b2Body_GetPosition(this->bodyId);
     b2Rot entityRotation       = b2Body_GetRotation(this->bodyId);
     b2SurfaceMaterial material = b2Shape_GetSurfaceMaterial(this->shapeId);
-    uint32_t color = material.customColor ? material.customColor : 0xFF000000;
+    Color materialColor =
+        material.customColor ? material.customColor : 0xFF00FF00;
 
     for (int i = 0; i < boxPolygon.count; ++i) {
         // Rotate the vertex
@@ -80,9 +119,8 @@ void Object::onRender() {
     }
     sdlVertices.push_back(sdlVertices[0]);
 
-    SDL_SetRenderDrawColor(this->renderer, (color >> 24) & 0xFF,
-                           (color >> 16) & 0xFF, (color >> 8) & 0xFF,
-                           color & 0xFF);
+    SDL_SetRenderDrawColor(this->renderer, materialColor.r, materialColor.g,
+                           materialColor.b, materialColor.a);
     SDL_RenderLines(this->renderer, sdlVertices.data(),
                     static_cast<unsigned int>(sdlVertices.size()));
 }

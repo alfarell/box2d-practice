@@ -1,8 +1,7 @@
 #include "Square.hpp"
 
 Square::Square(SDL_Renderer* renderer, SquareProperties properties)
-    : Object(renderer, (ObjectProperties)properties),
-      shapeDef(properties.shapeDef) {
+    : Object(renderer, (ObjectProperties)properties) {
     b2Polygon newPolygon =
         b2MakeBox(properties.width / 2, properties.height / 2);
 

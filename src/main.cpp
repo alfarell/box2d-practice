@@ -2,9 +2,6 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#include <box2d/box2d.h>
-
-#include <vector>
 
 #include "App.hpp"
 #include "System/Frame.hpp"

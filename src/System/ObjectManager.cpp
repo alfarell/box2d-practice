@@ -1,0 +1,57 @@
+#include "ObjectManager.hpp"
+
+ObjectManager::ObjectManager()
+    : objects(std::make_shared<std::vector<std::unique_ptr<Object>>>()) {}
+
+ObjectManager::~ObjectManager() {
+    this->onDestroy();
+}
+
+std::shared_ptr<std::vector<std::unique_ptr<Object>>>
+ObjectManager::getObjects() const {
+    return this->objects;
+}
+
+void ObjectManager::addObject(std::unique_ptr<Object> object) {
+    this->objects->push_back(std::move(object));
+}
+
+void ObjectManager::addObject(Object object) {
+    this->objects->push_back(std::move(std::make_unique<Object>(object)));
+}
+
+void ObjectManager::removeObject(Object* object) {
+    auto cb = [object](const std::unique_ptr<Object>& obj) {
+        return obj.get() == object;
+    };
+    auto it = std::remove_if(this->objects->begin(), this->objects->end(), cb);
+    this->objects->erase(it, this->objects->end());
+}
+
+void ObjectManager::removeObject(const std::string& id) {
+    auto cb = [&id](const std::unique_ptr<Object>& obj) {
+        return obj->getId() == id;
+    };
+    auto it = std::remove_if(this->objects->begin(), this->objects->end(), cb);
+    this->objects->erase(it, this->objects->end());
+}
+
+void ObjectManager::removeObjectsWithName(const std::string& name) {
+    auto cb = [&name](const std::unique_ptr<Object>& obj) {
+        return obj->getName() == name;
+    };
+    auto it = std::remove_if(this->objects->begin(), this->objects->end(), cb);
+    this->objects->erase(it, this->objects->end());
+}
+
+void ObjectManager::removeObjectsWithTag(const std::string& tag) {
+    auto cb = [&tag](const std::unique_ptr<Object>& obj) {
+        return obj->hasTag(tag);
+    };
+    auto it = std::remove_if(this->objects->begin(), this->objects->end(), cb);
+    this->objects->erase(it, this->objects->end());
+}
+
+void ObjectManager::onDestroy() {
+    this->objects->clear();
+}
