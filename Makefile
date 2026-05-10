@@ -1,20 +1,21 @@
 PROJECT_NAME ?= try_box2d
 CONFIG ?= Debug
-BIN_DIR := ./build/bin
+BUILD_DIR := build
+BIN_DIR := $(BUILD_DIR)/bin
 
 .PHONY: deps build run clean clean_app
 
 deps:
-	cmake -S . -B build
+	cmake -S . -B $(BUILD_DIR)
 
 build:
-	cmake --build build --config $(CONFIG)
+	cmake --build $(BUILD_DIR) --config $(CONFIG)
 
 run:
 	 $(BIN_DIR)/$(CONFIG)/$(PROJECT_NAME)
 
 clean:
-	rm -rf build
+	rm -rf $(BUILD_DIR)
 
 clean_app:
-	rm -rf build/bin/$(CONFIG)
+	rm -rf $(BIN_DIR)/$(CONFIG)
