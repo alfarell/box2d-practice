@@ -2,12 +2,12 @@ PROJECT_NAME ?= try_box2d
 CONFIG ?= Debug
 BIN_DIR := ./build/bin
 
-.PHONY: build_cmake build_app run clean clean_app
+.PHONY: deps build run clean clean_app
 
-build_cmake:
+deps:
 	cmake -S . -B build
 
-build_app:
+build:
 	cmake --build build --config $(CONFIG)
 
 run:
