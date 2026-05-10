@@ -124,7 +124,6 @@ void App::onDestroy() {
 
     if (this->worldId.generation == b2_nullWorldId.generation &&
         this->worldId.index1 == b2_nullWorldId.index1) {
-        SDL_Log("Box2D world is already null.");
         return;
     }
 
