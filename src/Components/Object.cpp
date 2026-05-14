@@ -5,13 +5,13 @@ Object::Object(SDL_Renderer* renderer) : renderer(renderer) {}
 Object::Object(SDL_Renderer* renderer, ObjectProperties properties)
     : renderer(renderer),
       worldId(properties.worldId),
-      id(properties.id),
       name(properties.name),
-      tags(properties.tags) {
+      tags(properties.tags),
+      active(true) {
     this->bodyId = b2CreateBody(*worldId, properties.bodyDef);
 }
 
-std::string Object::getId() const {
+uint32_t Object::getId() const {
     return this->id;
 }
 
@@ -22,7 +22,8 @@ std::string Object::getName() const {
 std::vector<std::string> Object::getTags() const {
     return this->tags;
 }
-void Object::setId(const std::string& newId) {
+
+void Object::setId(uint32_t newId) {
     this->id = newId;
 }
 
@@ -44,6 +45,18 @@ void Object::removeTag(const std::string& tag) {
 bool Object::hasTag(const std::string& tag) const {
     return std::find(this->tags.begin(), this->tags.end(), tag) !=
            this->tags.end();
+}
+
+bool Object::isActive() const {
+    return this->active;
+}
+
+void Object::activate() {
+    this->active = true;
+}
+
+void Object::deactivate() {
+    this->active = false;
 }
 
 b2BodyId Object::getBodyId() const {

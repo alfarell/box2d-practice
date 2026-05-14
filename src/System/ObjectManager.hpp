@@ -10,6 +10,7 @@
 
 class ObjectManager {
    private:
+    uint32_t nextId = 1;
     std::shared_ptr<std::vector<std::unique_ptr<Object>>> objects;
 
    public:
@@ -20,10 +21,10 @@ class ObjectManager {
     ObjectManager& operator=(const ObjectManager&) = delete;
 
     std::shared_ptr<std::vector<std::unique_ptr<Object>>> getObjects() const;
-    void addObject(std::unique_ptr<Object> object);
-    void addObject(Object object);
+    void createObject(std::unique_ptr<Object> object);
+    void createObject(Object object);
     void removeObject(Object* object);
-    void removeObject(const std::string& id);
+    void removeObject(const uint32_t& id);
     void removeObjectsWithName(const std::string& name);
     void removeObjectsWithTag(const std::string& tag);
     void onDestroy();

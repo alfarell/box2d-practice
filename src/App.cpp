@@ -28,7 +28,6 @@ bool App::init() {
     shapeDef.material.customColor = 0xFF00FF00;
 
     SquareProperties groundProperies = {};
-    groundProperies.id               = "ground";
     groundProperies.name             = "Ground";
     groundProperies.tags             = {"ground", "static"};
     groundProperies.worldId          = &this->worldId;
@@ -40,7 +39,7 @@ bool App::init() {
     std::unique_ptr<Square> ground = std::make_unique<Square>(
         this->window->getSDLRenderer(), groundProperies);
 
-    objectManager.addObject(std::move(ground));
+    objectManager.createObject(std::move(ground));
 
     return true;
 }
@@ -64,7 +63,6 @@ void App::onEvent(SDL_Event* event) {
         shapeDef.material.customColor = 0xFFFF0F00;
 
         SquareProperties squareProperties = {};
-        squareProperties.id               = "box";
         squareProperties.name             = "Box";
         squareProperties.tags             = {"box", "dynamic"};
         squareProperties.worldId          = &this->worldId;
@@ -76,7 +74,7 @@ void App::onEvent(SDL_Event* event) {
         std::unique_ptr<Square> newBox = std::make_unique<Square>(
             this->window->getSDLRenderer(), squareProperties);
 
-        objectManager.addObject(std::move(newBox));
+        objectManager.createObject(std::move(newBox));
     }
 
     for (const auto& object : *this->objectManager.getObjects()) {

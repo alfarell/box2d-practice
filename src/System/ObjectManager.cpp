@@ -12,11 +12,13 @@ ObjectManager::getObjects() const {
     return this->objects;
 }
 
-void ObjectManager::addObject(std::unique_ptr<Object> object) {
+void ObjectManager::createObject(std::unique_ptr<Object> object) {
+    object->setId(this->nextId++);
     this->objects->push_back(std::move(object));
 }
 
-void ObjectManager::addObject(Object object) {
+void ObjectManager::createObject(Object object) {
+    object.setId(this->nextId++);
     this->objects->push_back(std::move(std::make_unique<Object>(object)));
 }
 
@@ -28,7 +30,7 @@ void ObjectManager::removeObject(Object* object) {
     this->objects->erase(it, this->objects->end());
 }
 
-void ObjectManager::removeObject(const std::string& id) {
+void ObjectManager::removeObject(const uint32_t& id) {
     auto cb = [&id](const std::unique_ptr<Object>& obj) {
         return obj->getId() == id;
     };
