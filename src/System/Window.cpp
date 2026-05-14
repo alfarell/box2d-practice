@@ -20,10 +20,13 @@ bool Window::create() {
         return false;
     }
 
-    if (!SDL_CreateWindowAndRenderer(
-            this->windowMetadata.title, this->windowMetadata.width,
-            this->windowMetadata.height, SDL_WINDOW_RESIZABLE, &this->window,
-            &this->renderer)) {
+    SDL_WindowFlags windowFlags =
+        SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY;
+
+    if (!SDL_CreateWindowAndRenderer(this->windowMetadata.title,
+                                     this->windowMetadata.width,
+                                     this->windowMetadata.height, windowFlags,
+                                     &this->window, &this->renderer)) {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
         return false;
     }

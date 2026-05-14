@@ -3,8 +3,14 @@
 #include <SDL3/SDL.h>
 
 class Input {
+   public:
+    struct MouseState {
+        SDL_MouseButtonEvent windowEvent;
+        SDL_MouseButtonEvent renderEvent;
+    };
+
    private:
-    SDL_Event* currentEvent;
+    MouseState mouseState;
 
     Input() = default;
 
@@ -16,6 +22,6 @@ class Input {
 
     static Input& Get();
 
-    static void Update(SDL_Event* event);
-    static SDL_Event* Event();
+    static void processEvent(SDL_Renderer* renderer, SDL_Event* event);
+    static const MouseState* getMouseState();
 };

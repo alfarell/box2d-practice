@@ -21,11 +21,11 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
         return SDL_APP_FAILURE;
     }
 
-    Frame::Get().init();
-
     if (!app.init()) {
         return SDL_APP_FAILURE;
     }
+
+    Frame::Get().init();
 
     /* carry on with the program! */
     return SDL_APP_CONTINUE;
@@ -38,7 +38,7 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
         return SDL_APP_SUCCESS;
     }
 
-    Input::Get().Update(event);
+    Input::Get().processEvent(window.getSDLRenderer(), event);
     app.onEvent(event);
 
     /* carry on with the program! */

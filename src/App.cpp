@@ -46,43 +46,37 @@ bool App::init() {
 }
 
 void App::onEvent(SDL_Event* event) {
-    if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
-        switch (event->button.button) {
-            case SDL_BUTTON_LEFT: {
-                float boxWidth  = 30.0f;
-                float boxHeight = 30.0f;
+    const Input::MouseState* mouseState = Input::getMouseState();
+    if (mouseState->renderEvent.down) {
+        float boxWidth  = 30.0f;
+        float boxHeight = 30.0f;
 
-                b2BodyDef bodyDef    = b2DefaultBodyDef();
-                bodyDef.gravityScale = 9.8f;
-                bodyDef.type         = b2_dynamicBody;
-                bodyDef.position     = b2Vec2{event->button.x, event->button.y};
+        b2BodyDef bodyDef    = b2DefaultBodyDef();
+        bodyDef.gravityScale = 9.8f;
+        bodyDef.type         = b2_dynamicBody;
+        bodyDef.position =
+            b2Vec2{mouseState->renderEvent.x, mouseState->renderEvent.y};
 
-                b2ShapeDef shapeDef           = b2DefaultShapeDef();
-                shapeDef.density              = 100.0f;
-                shapeDef.material.friction    = 1.0f;
-                shapeDef.material.restitution = 0.3f;
-                shapeDef.material.customColor = 0xFFFF0F00;
+        b2ShapeDef shapeDef           = b2DefaultShapeDef();
+        shapeDef.density              = 100.0f;
+        shapeDef.material.friction    = 1.0f;
+        shapeDef.material.restitution = 0.3f;
+        shapeDef.material.customColor = 0xFFFF0F00;
 
-                SquareProperties squareProperties = {};
-                squareProperties.id               = "box";
-                squareProperties.name             = "Box";
-                squareProperties.tags             = {"box", "dynamic"};
-                squareProperties.worldId          = &this->worldId;
-                squareProperties.bodyDef          = &bodyDef;
-                squareProperties.shapeDef         = shapeDef;
-                squareProperties.width            = boxWidth;
-                squareProperties.height           = boxHeight;
+        SquareProperties squareProperties = {};
+        squareProperties.id               = "box";
+        squareProperties.name             = "Box";
+        squareProperties.tags             = {"box", "dynamic"};
+        squareProperties.worldId          = &this->worldId;
+        squareProperties.bodyDef          = &bodyDef;
+        squareProperties.shapeDef         = shapeDef;
+        squareProperties.width            = boxWidth;
+        squareProperties.height           = boxHeight;
 
-                std::unique_ptr<Square> newBox = std::make_unique<Square>(
-                    this->window->getSDLRenderer(), squareProperties);
+        std::unique_ptr<Square> newBox = std::make_unique<Square>(
+            this->window->getSDLRenderer(), squareProperties);
 
-                objectManager.addObject(std::move(newBox));
-
-                break;
-            }
-            default:
-                break;
-        }
+        objectManager.addObject(std::move(newBox));
     }
 
     for (const auto& object : *this->objectManager.getObjects()) {
