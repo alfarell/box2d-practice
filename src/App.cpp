@@ -36,10 +36,8 @@ bool App::init() {
     groundProperies.width            = groundRect.w;
     groundProperies.height           = groundRect.h;
 
-    std::unique_ptr<Square> ground = std::make_unique<Square>(
-        this->window->getSDLRenderer(), groundProperies);
-
-    objectManager.createObject(std::move(ground));
+    objectManager.createObject<Square>(this->window->getSDLRenderer(),
+                                       groundProperies);
 
     return true;
 }
@@ -71,10 +69,8 @@ void App::onEvent(SDL_Event* event) {
         squareProperties.width            = boxWidth;
         squareProperties.height           = boxHeight;
 
-        std::unique_ptr<Square> newBox = std::make_unique<Square>(
-            this->window->getSDLRenderer(), squareProperties);
-
-        objectManager.createObject(std::move(newBox));
+        objectManager.createObject<Square>(this->window->getSDLRenderer(),
+                                           squareProperties);
     }
 
     objectManager.onEvent(event);
@@ -87,7 +83,7 @@ void App::onUpdate() {
         b2World_Step(worldId, Frame::Get().getDeltaTime(), 8);
     };
 
-    for (const auto& object : this->objectManager.getObjects()) {
+    for (const auto& object : *this->objectManager.getObjects()) {
         b2Vec2 position       = object->getPosition();
         bool isFallFromGround = position.x > window->getWidth() ||
                                 position.x < 0 ||

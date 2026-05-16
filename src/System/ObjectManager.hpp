@@ -14,17 +14,27 @@ using ObjectList = std::vector<std::unique_ptr<Object>>;
 class ObjectManager {
    private:
     uint32_t nextId = 0;
-    std::shared_ptr<ObjectList> objects;
+    ObjectList objects;
 
    public:
-    ObjectManager();
+    ObjectManager() = default;
     ~ObjectManager();
 
     NON_COPYABLE(ObjectManager)
     NON_MOVABLE(ObjectManager)
 
-    const ObjectList& getObjects() const;
-    void createObject(std::unique_ptr<Object> object);
+    const ObjectList* getObjects() const;
+    template <typename T>
+    std::vector<T*> getObjects() const;
+    template <typename T>
+    T* getObjectById(const uint32_t& id) const;
+    template <typename T>
+    T* getObjectByName(const std::string& name) const;
+    template <typename T>
+    std::vector<T*> getObjectsByTag(const std::string& tag) const;
+
+    template <typename T, typename... Args>
+    T* createObject(Args&&... args);
     void removeObject(Object* object);
     void removeObject(const uint32_t& id);
     void removeObjectsWithName(const std::string& name);
@@ -38,3 +48,5 @@ class ObjectManager {
    private:
     void clearDeactivatedObjects();
 };
+
+#include "ObjectManager.tpp"
