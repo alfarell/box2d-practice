@@ -1,15 +1,13 @@
 #include "ObjectManager.hpp"
 
-ObjectManager::ObjectManager()
-    : objects(std::make_shared<std::vector<std::unique_ptr<Object>>>()) {}
+ObjectManager::ObjectManager() : objects(std::make_shared<ObjectList>()) {}
 
 ObjectManager::~ObjectManager() {
     this->onDestroy();
 }
 
-std::shared_ptr<std::vector<std::unique_ptr<Object>>>
-ObjectManager::getObjects() const {
-    return this->objects;
+const ObjectList& ObjectManager::getObjects() const {
+    return *this->objects;
 }
 
 void ObjectManager::createObject(std::unique_ptr<Object> object) {

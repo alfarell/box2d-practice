@@ -87,7 +87,7 @@ void App::onUpdate() {
         b2World_Step(worldId, Frame::Get().getDeltaTime(), 8);
     };
 
-    for (const auto& object : *this->objectManager.getObjects()) {
+    for (const auto& object : this->objectManager.getObjects()) {
         b2Vec2 position       = object->getPosition();
         bool isFallFromGround = position.x > window->getWidth() ||
                                 position.x < 0 ||

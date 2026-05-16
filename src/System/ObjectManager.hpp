@@ -9,10 +9,12 @@
 #include "../Components/Object.hpp"
 #include "../Helpers/ConstructorMacros.hpp"
 
+using ObjectList = std::vector<std::unique_ptr<Object>>;
+
 class ObjectManager {
    private:
     uint32_t nextId = 0;
-    std::shared_ptr<std::vector<std::unique_ptr<Object>>> objects;
+    std::shared_ptr<ObjectList> objects;
 
    public:
     ObjectManager();
@@ -21,7 +23,7 @@ class ObjectManager {
     NON_COPYABLE(ObjectManager)
     NON_MOVABLE(ObjectManager)
 
-    std::shared_ptr<std::vector<std::unique_ptr<Object>>> getObjects() const;
+    const ObjectList& getObjects() const;
     void createObject(std::unique_ptr<Object> object);
     void removeObject(Object* object);
     void removeObject(const uint32_t& id);
