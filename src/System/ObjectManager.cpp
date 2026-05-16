@@ -1,9 +1,5 @@
 #include "ObjectManager.hpp"
 
-ObjectManager::~ObjectManager() {
-    this->onDestroy();
-}
-
 const ObjectList* ObjectManager::getObjects() const {
     return &this->objects;
 }
@@ -40,22 +36,15 @@ void ObjectManager::removeObjectsWithTag(const std::string& tag) {
     this->objects.erase(it, this->objects.end());
 }
 
-void ObjectManager::onEvent(SDL_Event* event) {
+void ObjectManager::each(std::function<void(Object*)> callback) const {
     for (const auto& object : this->objects) {
-        object->onEvent(event);
+        callback(object.get());
     }
 }
 
-void ObjectManager::onUpdate() {
-    this->clearDeactivatedObjects();
+void ObjectManager::each(std::function<void(const Object*)> callback) const {
     for (const auto& object : this->objects) {
-        object->onUpdate();
-    }
-}
-
-void ObjectManager::onRender(SDL_Renderer* renderer) {
-    for (const auto& object : this->objects) {
-        object->onRender();
+        callback(object.get());
     }
 }
 
@@ -63,7 +52,7 @@ void ObjectManager::onDestroy() {
     this->objects.clear();
 }
 
-void ObjectManager::clearDeactivatedObjects() {
+void ObjectManager::removeInactiveObjects() {
     auto cb = [](const std::unique_ptr<Object>& obj) {
         return !obj->isActive();
     };

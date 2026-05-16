@@ -73,7 +73,7 @@ void App::onEvent(SDL_Event* event) {
                                            squareProperties);
     }
 
-    objectManager.onEvent(event);
+    objectManager.each([event](Object* object) { object->onEvent(event); });
 }
 
 void App::onUpdate() {
@@ -83,7 +83,7 @@ void App::onUpdate() {
         b2World_Step(worldId, Frame::Get().getDeltaTime(), 8);
     };
 
-    for (const auto& object : *this->objectManager.getObjects()) {
+    objectManager.each([&window = this->window](Object* object) {
         b2Vec2 position       = object->getPosition();
         bool isFallFromGround = position.x > window->getWidth() ||
                                 position.x < 0 ||
@@ -91,9 +91,9 @@ void App::onUpdate() {
         if (isFallFromGround) {
             object->deactivate();
         }
-    }
+    });
 
-    objectManager.onUpdate();
+    objectManager.each([](Object* object) { object->onUpdate(); });
 
     Frame::Get().accumulateTime(simulate);
 }
@@ -101,7 +101,7 @@ void App::onUpdate() {
 void App::onRender() {
     this->renderDefaultBackground();
 
-    objectManager.onRender(this->window->getSDLRenderer());
+    objectManager.each([](Object* object) { object->onRender(); });
 
     SDL_RenderPresent(window->getSDLRenderer());
 }

@@ -3,6 +3,7 @@
 #include <SDL3/SDL.h>
 #include <box2d/box2d.h>
 
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -17,8 +18,8 @@ class ObjectManager {
     ObjectList objects;
 
    public:
-    ObjectManager() = default;
-    ~ObjectManager();
+    ObjectManager()  = default;
+    ~ObjectManager() = default;
 
     NON_COPYABLE(ObjectManager)
     NON_MOVABLE(ObjectManager)
@@ -39,14 +40,12 @@ class ObjectManager {
     void removeObject(const uint32_t& id);
     void removeObjectsWithName(const std::string& name);
     void removeObjectsWithTag(const std::string& tag);
+    void removeInactiveObjects();
 
-    void onEvent(SDL_Event* event);
-    void onUpdate();
-    void onRender(SDL_Renderer* renderer);
     void onDestroy();
 
-   private:
-    void clearDeactivatedObjects();
+    void each(std::function<void(Object*)> callback) const;
+    void each(std::function<void(const Object*)> callback) const;
 };
 
 #include "ObjectManager.tpp"
