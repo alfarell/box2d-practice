@@ -2,7 +2,7 @@
 
 #include <SDL3/SDL.h>
 
-typedef struct Color {
+struct Color {
    private:
     uint32_t hexColor;
 
@@ -51,4 +51,4 @@ typedef struct Color {
     operator SDL_Color() const {
         return SDL_Color{r, g, b, a};
     }
-} Color;
+};

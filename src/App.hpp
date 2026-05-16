@@ -15,9 +15,9 @@
 #include "System/ObjectManager.hpp"
 #include "System/Window.hpp"
 
-typedef struct AppProperties {
+struct AppProperties {
     Color backgroundColor;
-} AppProperties;
+};
 
 class App {
    private:

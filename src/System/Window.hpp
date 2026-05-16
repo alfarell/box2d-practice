@@ -11,14 +11,14 @@
 #define DEFAULT_APP_VERSION "1.0"
 #define DEFAULT_APP_ORGANIZATION "com.example.sdl"
 
-typedef struct WindowMetadata {
+struct WindowMetadata {
     int width;
     int height;
     const char* title;
     const char* name;
     const char* version;
     const char* organization;
-} WindowMetadata;
+};
 
 class Window {
    private:
