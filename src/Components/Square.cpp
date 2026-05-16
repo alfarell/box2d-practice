@@ -9,6 +9,21 @@ Square::Square(SDL_Renderer* renderer, SquareProperties properties)
                                          &properties.shapeDef, &newPolygon);
 }
 
+Square::~Square() {
+    if (this->shapeId.index1 == b2_nullShapeId.index1 &&
+        this->shapeId.world0 == b2_nullShapeId.world0 &&
+        this->shapeId.generation == b2_nullShapeId.generation) {
+        return;
+    }
+
+    if (!b2Shape_IsValid(this->shapeId)) {
+        SDL_Log("Box2D shape with ID: %u is invalid.", this->shapeId.index1);
+        return;
+    }
+
+    b2DestroyShape(this->shapeId, true);
+}
+
 void Square::setSize(float newWidth, float newHeight) {
     b2Polygon newPolygon = b2MakeBox(newWidth / 2, newHeight / 2);
     b2Shape_SetPolygon(this->shapeId, &newPolygon);

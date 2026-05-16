@@ -77,24 +77,15 @@ void App::onEvent(SDL_Event* event) {
         objectManager.createObject(std::move(newBox));
     }
 
-    for (const auto& object : *this->objectManager.getObjects()) {
-        object->onEvent(event);
-    }
+    objectManager.onEvent(event);
 }
 
 void App::onUpdate() {
     Frame::Get().calculateDeltaTime();
+
     const auto simulate = [&]() {
         b2World_Step(worldId, Frame::Get().getDeltaTime(), 8);
     };
-    for (const auto& object : *this->objectManager.getObjects()) {
-        object->onUpdate();
-    }
-    Frame::Get().accumulateTime(simulate);
-}
-
-void App::onRender() {
-    this->renderDefaultBackground();
 
     for (const auto& object : *this->objectManager.getObjects()) {
         b2Vec2 position       = object->getPosition();
@@ -102,11 +93,19 @@ void App::onRender() {
                                 position.x < 0 ||
                                 position.y > window->getHeight();
         if (isFallFromGround) {
-            object->setPosition({(float)this->window->getWidth() / 2, 0});
-            continue;
+            object->deactivate();
         }
-        object->onRender();
     }
+
+    objectManager.onUpdate();
+
+    Frame::Get().accumulateTime(simulate);
+}
+
+void App::onRender() {
+    this->renderDefaultBackground();
+
+    objectManager.onRender(this->window->getSDLRenderer());
 
     SDL_RenderPresent(window->getSDLRenderer());
 }

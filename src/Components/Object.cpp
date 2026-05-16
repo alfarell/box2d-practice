@@ -11,6 +11,21 @@ Object::Object(SDL_Renderer* renderer, ObjectProperties properties)
     this->bodyId = b2CreateBody(*worldId, properties.bodyDef);
 }
 
+Object::~Object() {
+    if (this->bodyId.index1 == b2_nullBodyId.index1 &&
+        this->bodyId.world0 == b2_nullBodyId.world0 &&
+        this->bodyId.generation == b2_nullBodyId.generation) {
+        return;
+    }
+
+    if (!b2Body_IsValid(this->bodyId)) {
+        SDL_Log("Box2D body with ID: %u is invalid.", this->bodyId.index1);
+        return;
+    }
+
+    b2DestroyBody(this->bodyId);
+}
+
 uint32_t Object::getId() const {
     return this->id;
 }

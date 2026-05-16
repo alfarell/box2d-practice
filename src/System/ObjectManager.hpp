@@ -10,7 +10,7 @@
 
 class ObjectManager {
    private:
-    uint32_t nextId = 1;
+    uint32_t nextId = 0;
     std::shared_ptr<std::vector<std::unique_ptr<Object>>> objects;
 
    public:
@@ -27,5 +27,12 @@ class ObjectManager {
     void removeObject(const uint32_t& id);
     void removeObjectsWithName(const std::string& name);
     void removeObjectsWithTag(const std::string& tag);
+
+    void onEvent(SDL_Event* event);
+    void onUpdate();
+    void onRender(SDL_Renderer* renderer);
     void onDestroy();
+
+   private:
+    void clearDeactivatedObjects();
 };

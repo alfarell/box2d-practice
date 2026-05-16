@@ -37,7 +37,7 @@ class Object {
    public:
     Object(SDL_Renderer* renderer);
     Object(SDL_Renderer* renderer, ObjectProperties properties);
-    virtual ~Object() = default;
+    virtual ~Object();
 
     virtual void onEvent(SDL_Event* event);
     virtual void onUpdate();

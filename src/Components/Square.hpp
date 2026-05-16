@@ -14,7 +14,7 @@ struct SquareProperties : public ObjectProperties {
 class Square : public Object {
    public:
     Square(SDL_Renderer* renderer, SquareProperties properties);
-    ~Square() = default;
+    virtual ~Square();
 
     void setSize(float newWidth, float newHeight);
     void setWidth(float newWidth);
