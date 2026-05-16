@@ -4,6 +4,8 @@
 
 #include <functional>
 
+#include "../Helpers/ConstructorMacros.hpp"
+
 #define DEFAULT_TARGET_FPS 60
 
 class Frame {
@@ -21,8 +23,8 @@ class Frame {
    public:
     ~Frame() = default;
 
-    Frame(const Frame&)            = delete;
-    Frame& operator=(const Frame&) = delete;
+    NON_COPYABLE(Frame)
+    NON_MOVABLE(Frame)
 
     static Frame& Get();
 

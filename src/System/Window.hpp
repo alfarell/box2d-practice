@@ -2,6 +2,8 @@
 
 #include <SDL3/SDL.h>
 
+#include "../Components/Square.hpp"
+
 #define DEFAULT_WINDOW_WIDTH 1280
 #define DEFAULT_WINDOW_HEIGHT 720
 #define DEFAULT_WINDOW_TITLE "SDL App"
@@ -31,8 +33,8 @@ class Window {
     Window(const WindowMetadata& metadata);
     ~Window();
 
-    Window(const Window&)            = delete;
-    Window& operator=(const Window&) = delete;
+    NON_COPYABLE(Window)
+    NON_MOVABLE(Window)
 
     bool create();
     void destroy();

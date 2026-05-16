@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#include "../Helpers/ConstructorMacros.hpp"
 #include "../System/Color.hpp"
 
 class ObjectManager;
@@ -38,6 +39,9 @@ class Object {
     Object(SDL_Renderer* renderer);
     Object(SDL_Renderer* renderer, ObjectProperties properties);
     virtual ~Object();
+
+    NON_COPYABLE(Object)
+    NON_MOVABLE(Object)
 
     virtual void onEvent(SDL_Event* event);
     virtual void onUpdate();

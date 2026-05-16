@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "../Components/Object.hpp"
+#include "../Helpers/ConstructorMacros.hpp"
 
 class ObjectManager {
    private:
@@ -17,12 +18,11 @@ class ObjectManager {
     ObjectManager();
     ~ObjectManager();
 
-    ObjectManager(const ObjectManager&)            = delete;
-    ObjectManager& operator=(const ObjectManager&) = delete;
+    NON_COPYABLE(ObjectManager)
+    NON_MOVABLE(ObjectManager)
 
     std::shared_ptr<std::vector<std::unique_ptr<Object>>> getObjects() const;
     void createObject(std::unique_ptr<Object> object);
-    void createObject(Object object);
     void removeObject(Object* object);
     void removeObject(const uint32_t& id);
     void removeObjectsWithName(const std::string& name);

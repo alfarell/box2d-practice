@@ -17,11 +17,6 @@ void ObjectManager::createObject(std::unique_ptr<Object> object) {
     this->objects->push_back(std::move(object));
 }
 
-void ObjectManager::createObject(Object object) {
-    object.setId(this->nextId++);
-    this->objects->push_back(std::move(std::make_unique<Object>(object)));
-}
-
 void ObjectManager::removeObject(Object* object) {
     auto cb = [object](const std::unique_ptr<Object>& obj) {
         return obj.get() == object;

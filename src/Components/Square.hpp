@@ -3,6 +3,7 @@
 #include <SDL3/SDL.h>
 #include <box2d/box2d.h>
 
+#include "../Helpers/ConstructorMacros.hpp"
 #include "Object.hpp"
 
 struct SquareProperties : public ObjectProperties {
@@ -15,6 +16,9 @@ class Square : public Object {
    public:
     Square(SDL_Renderer* renderer, SquareProperties properties);
     virtual ~Square();
+
+    NON_COPYABLE(Square)
+    NON_MOVABLE(Square)
 
     void setSize(float newWidth, float newHeight);
     void setWidth(float newWidth);

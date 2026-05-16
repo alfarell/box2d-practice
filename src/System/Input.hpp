@@ -2,6 +2,8 @@
 
 #include <SDL3/SDL.h>
 
+#include "../Helpers/ConstructorMacros.hpp"
+
 class Input {
    public:
     struct MouseState {
@@ -17,8 +19,8 @@ class Input {
    public:
     ~Input() = default;
 
-    Input(const Input&)            = delete;
-    Input& operator=(const Input&) = delete;
+    NON_COPYABLE(Input)
+    NON_MOVABLE(Input)
 
     static Input& Get();
 

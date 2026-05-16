@@ -8,6 +8,7 @@
 
 #include "Components/Object.hpp"
 #include "Components/Square.hpp"
+#include "Helpers/ConstructorMacros.hpp"
 #include "System/Color.hpp"
 #include "System/Frame.hpp"
 #include "System/Input.hpp"
@@ -32,8 +33,8 @@ class App {
     App(Window* window);
     ~App();
 
-    App(const App&)            = delete;
-    App& operator=(const App&) = delete;
+    NON_COPYABLE(App)
+    NON_MOVABLE(App)
 
     bool init();
     void onEvent(SDL_Event* event);
