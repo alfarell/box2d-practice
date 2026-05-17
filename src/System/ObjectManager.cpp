@@ -48,7 +48,7 @@ void ObjectManager::each(std::function<void(const Object*)> callback) const {
     }
 }
 
-void ObjectManager::onDestroy() {
+void ObjectManager::destroy() {
     this->objects.clear();
 }
 

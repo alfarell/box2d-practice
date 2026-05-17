@@ -10,7 +10,7 @@ bool Window::create() {
     SDL_SetAppMetadata(this->windowMetadata.name, this->windowMetadata.version,
                        this->windowMetadata.organization);
 
-    if (this->window != NULL || this->renderer != NULL) {
+    if (this->window != nullptr || this->renderer != nullptr) {
         SDL_Log("Window and renderer already created!");
         return false;
     }

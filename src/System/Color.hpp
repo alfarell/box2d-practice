@@ -4,13 +4,13 @@
 
 struct Color {
    private:
-    uint32_t hexColor;
+    uint32_t hexColor = 0xFF000000;
 
    public:
-    const Uint8 r;
-    const Uint8 g;
-    const Uint8 b;
-    const Uint8 a;
+    const Uint8 r = 0;
+    const Uint8 g = 0;
+    const Uint8 b = 0;
+    const Uint8 a = 255;
 
     Color() : hexColor(0xFF000000), r(0), g(0), b(0), a(255) {}
 

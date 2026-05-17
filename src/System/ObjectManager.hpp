@@ -15,7 +15,7 @@ using ObjectList = std::vector<std::unique_ptr<Object>>;
 class ObjectManager {
    private:
     uint32_t nextId = 0;
-    ObjectList objects;
+    ObjectList objects{};
 
    public:
     ObjectManager()  = default;
@@ -42,7 +42,7 @@ class ObjectManager {
     void removeObjectsWithTag(const std::string& tag);
     void removeInactiveObjects();
 
-    void onDestroy();
+    void destroy();
 
     void each(std::function<void(Object*)> callback) const;
     void each(std::function<void(const Object*)> callback) const;

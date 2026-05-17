@@ -20,16 +20,16 @@ struct ObjectProperties {
 
 class Object {
    protected:
-    SDL_Renderer* renderer = NULL;
+    SDL_Renderer* renderer = nullptr;
 
-    uint32_t id;
-    std::string name;
-    std::vector<std::string> tags;
-    bool active;
+    uint32_t id      = 0;
+    std::string name = "";
+    std::vector<std::string> tags{};
+    bool active = false;
 
-    const b2WorldId* worldId;
-    b2BodyId bodyId;
-    b2ShapeId shapeId;
+    const b2WorldId* worldId = nullptr;
+    b2BodyId bodyId{};
+    b2ShapeId shapeId{};
 
    protected:
     friend class ObjectManager;

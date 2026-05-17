@@ -105,7 +105,7 @@ void App::onRender() {
 }
 
 void App::onDestroy() {
-    this->objectManager.onDestroy();
+    this->objectManager.destroy();
     this->physics.destroy();
 }
 

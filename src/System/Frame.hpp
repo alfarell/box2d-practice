@@ -11,14 +11,14 @@
 
 class Frame {
    private:
-    bool isVSyncEnabled = false;
-    int targetFPS       = DEFAULT_TARGET_FPS;
-    float deltaTime     = (float)(1.0 / DEFAULT_TARGET_FPS);
-    Uint64 currentTicks;
-    Uint64 lastTicks;
-    double measuredFrameTime;
-    double performanceFrequency;
-    double accumulatedTime;
+    bool isVSyncEnabled         = false;
+    int targetFPS               = DEFAULT_TARGET_FPS;
+    float deltaTime             = (float)(1.0 / DEFAULT_TARGET_FPS);
+    Uint64 currentTicks         = 0;
+    Uint64 lastTicks            = 0;
+    double measuredFrameTime    = 0.0;
+    double performanceFrequency = 0.0;
+    double accumulatedTime      = 0.0;
 
     Frame() = default;
 

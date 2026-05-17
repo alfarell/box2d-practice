@@ -22,8 +22,8 @@ struct WindowMetadata {
 
 class Window {
    private:
-    SDL_Window* window            = NULL;
-    SDL_Renderer* renderer        = NULL;
+    SDL_Window* window            = nullptr;
+    SDL_Renderer* renderer        = nullptr;
     WindowMetadata windowMetadata = {
         DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_TITLE,
         DEFAULT_APP_NAME,     DEFAULT_APP_VERSION,   DEFAULT_APP_ORGANIZATION};

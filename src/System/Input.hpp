@@ -23,8 +23,8 @@ struct MouseMotionState {
 
 class Input {
    private:
-    MouseClickState mouseClickState;
-    MouseMotionState mouseMotionState;
+    MouseClickState mouseClickState{};
+    MouseMotionState mouseMotionState{};
 
     Input() = default;
 
