@@ -4,17 +4,34 @@
 
 #include "../Helpers/ConstructorMacros.hpp"
 
-class Input {
-   public:
-    struct MouseState {
-        SDL_MouseButtonEvent windowEvent;
-        SDL_MouseButtonEvent renderEvent;
-    };
+struct MouseClickState {
+    SDL_MouseButtonEvent windowEvent{};
+    SDL_MouseButtonEvent renderEvent{};
+    bool justPressed{};
+    bool justReleased{};
+};
 
+struct MouseMotionState {
+    float windowX{};
+    float windowY{};
+    float windowXRel{};
+    float windowYRel{};
+    float renderX{};
+    float renderY{};
+    SDL_MouseButtonFlags buttonState{};
+};
+
+class Input {
    private:
-    MouseState mouseState;
+    MouseClickState mouseClickState;
+    MouseMotionState mouseMotionState;
 
     Input() = default;
+
+    static void processMouseClickEvent(SDL_Renderer* renderer,
+                                       SDL_Event* event);
+    static void processMouseMotionEvent(SDL_Renderer* renderer,
+                                        SDL_Event* event);
 
    public:
     ~Input() = default;
@@ -25,5 +42,8 @@ class Input {
     static Input& Get();
 
     static void processEvent(SDL_Renderer* renderer, SDL_Event* event);
-    static const MouseState* getMouseState();
+
+    static const MouseClickState* getMouseClickEvent();
+    static const MouseMotionState* getMouseMotionEvent();
+    static void resetPerFrameState();
 };

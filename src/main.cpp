@@ -50,6 +50,8 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
     app.onUpdate();
     app.onRender();
 
+    Input::resetPerFrameState();
+
     /* carry on with the program! */
     return SDL_APP_CONTINUE;
 }

@@ -43,8 +43,18 @@ bool App::init() {
 }
 
 void App::onEvent(SDL_Event* event) {
-    const Input::MouseState* mouseState = Input::getMouseState();
-    if (mouseState->renderEvent.down) {
+    objectManager.each([event](Object* object) { object->onEvent(event); });
+}
+
+void App::onUpdate() {
+    Frame::Get().calculateDeltaTime();
+
+    const auto simulate = [&]() {
+        b2World_Step(worldId, Frame::Get().getDeltaTime(), 8);
+    };
+
+    const MouseClickState* mouseState = Input::getMouseClickEvent();
+    if (mouseState->justPressed) {
         float boxWidth  = 30.0f;
         float boxHeight = 30.0f;
 
@@ -72,16 +82,6 @@ void App::onEvent(SDL_Event* event) {
         objectManager.createObject<Square>(this->window->getSDLRenderer(),
                                            squareProperties);
     }
-
-    objectManager.each([event](Object* object) { object->onEvent(event); });
-}
-
-void App::onUpdate() {
-    Frame::Get().calculateDeltaTime();
-
-    const auto simulate = [&]() {
-        b2World_Step(worldId, Frame::Get().getDeltaTime(), 8);
-    };
 
     objectManager.each([&window = this->window](Object* object) {
         b2Vec2 position       = object->getPosition();
