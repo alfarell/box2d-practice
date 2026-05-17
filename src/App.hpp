@@ -38,6 +38,7 @@ class App {
 
     bool init();
     void onEvent(SDL_Event* event);
+    void onSimulate();
     void onUpdate();
     void onRender();
     void onDestroy();

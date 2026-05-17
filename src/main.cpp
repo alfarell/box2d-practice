@@ -26,6 +26,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     }
 
     Frame::Get().init();
+    Frame::Get().enableVSync(window.getSDLRenderer());
 
     /* carry on with the program! */
     return SDL_APP_CONTINUE;
@@ -47,10 +48,15 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
 
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult SDL_AppIterate(void* appstate) {
+    Frame::Get().calculateDeltaTime();
+
+    app.onSimulate();
     app.onUpdate();
     app.onRender();
 
     Input::resetPerFrameState();
+
+    Frame::Get().renderFrame(window.getSDLRenderer());
 
     /* carry on with the program! */
     return SDL_APP_CONTINUE;

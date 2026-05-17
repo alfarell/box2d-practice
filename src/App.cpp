@@ -46,13 +46,15 @@ void App::onEvent(SDL_Event* event) {
     objectManager.each([event](Object* object) { object->onEvent(event); });
 }
 
-void App::onUpdate() {
-    Frame::Get().calculateDeltaTime();
-
+void App::onSimulate() {
     const auto simulate = [&]() {
         b2World_Step(worldId, Frame::Get().getDeltaTime(), 8);
     };
 
+    Frame::Get().accumulateTime(simulate);
+}
+
+void App::onUpdate() {
     const MouseClickState* mouseState = Input::getMouseClickEvent();
     if (mouseState->justPressed) {
         float boxWidth  = 30.0f;
@@ -94,8 +96,6 @@ void App::onUpdate() {
     });
 
     objectManager.each([](Object* object) { object->onUpdate(); });
-
-    Frame::Get().accumulateTime(simulate);
 }
 
 void App::onRender() {

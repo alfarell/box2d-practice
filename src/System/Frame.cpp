@@ -6,37 +6,65 @@ Frame& Frame::Get() {
 }
 
 void Frame::init() {
-    currentTicks         = SDL_GetPerformanceCounter();
-    lastTicks            = 0;
-    targetFrameTime      = 0.0;
-    performanceFrequency = (float)(SDL_GetPerformanceFrequency());
-    accumulatedTime      = 0.0;
+    this->currentTicks         = SDL_GetPerformanceCounter();
+    this->lastTicks            = this->currentTicks;
+    this->measuredFrameTime    = 0.0;
+    this->performanceFrequency = (double)(SDL_GetPerformanceFrequency());
+    this->accumulatedTime      = 0.0;
 }
 
 void Frame::calculateDeltaTime() {
-    lastTicks       = currentTicks;
-    currentTicks    = SDL_GetPerformanceCounter();
-    targetFrameTime = (currentTicks - lastTicks) / performanceFrequency;
+    this->lastTicks    = this->currentTicks;
+    this->currentTicks = SDL_GetPerformanceCounter();
+    this->measuredFrameTime =
+        (this->currentTicks - this->lastTicks) / this->performanceFrequency;
+    if (this->measuredFrameTime > MAX_DELTA_TIME)
+        this->measuredFrameTime = MAX_DELTA_TIME;
 }
 
 void Frame::accumulateTime(const std::function<void()>& updateFunction) {
-    accumulatedTime += targetFrameTime;
+    this->accumulatedTime += this->measuredFrameTime;
 
-    while (accumulatedTime >= deltaTime) {
+    while (this->accumulatedTime >= this->deltaTime) {
         updateFunction();
-        accumulatedTime -= deltaTime;
+        this->accumulatedTime -= this->deltaTime;
     }
 }
 
+void Frame::renderFrame(SDL_Renderer* renderer) {
+    if (this->isVSyncEnabled) return;
+
+    Uint64 now = SDL_GetPerformanceCounter();
+    double elapsedThisFrame =
+        (double)(now - this->currentTicks) / this->performanceFrequency;
+    double targetFrameTime = 1.0 / (double)this->targetFPS;
+    double remainingTime   = targetFrameTime - elapsedThisFrame;
+
+    if (remainingTime <= 0.0) return;
+
+    SDL_DelayNS((Uint64)(remainingTime * 1e9));
+}
+
+void Frame::enableVSync(SDL_Renderer* renderer) {
+    SDL_SetRenderVSync(renderer, 1);
+    this->isVSyncEnabled = true;
+}
+
+void Frame::disableVSync(SDL_Renderer* renderer) {
+    SDL_SetRenderVSync(renderer, 0);
+    this->isVSyncEnabled = false;
+}
+
 void Frame::setTargetFPS(int newTargetFPS) {
-    targetFPS = newTargetFPS;
-    deltaTime = (float)(1.0 / targetFPS);
+    if (newTargetFPS <= 0) return;
+    this->targetFPS = newTargetFPS;
+    this->deltaTime = (float)(1.0 / this->targetFPS);
 }
 
 int Frame::getTargetFPS() const {
-    return targetFPS;
+    return this->targetFPS;
 }
 
 float Frame::getDeltaTime() const {
-    return deltaTime;
+    return this->deltaTime;
 }

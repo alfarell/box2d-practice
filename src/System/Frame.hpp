@@ -7,14 +7,16 @@
 #include "../Helpers/ConstructorMacros.hpp"
 
 #define DEFAULT_TARGET_FPS 60
+#define MAX_DELTA_TIME 0.25f
 
 class Frame {
    private:
-    int targetFPS   = DEFAULT_TARGET_FPS;
-    float deltaTime = (float)(1.0 / DEFAULT_TARGET_FPS);
+    bool isVSyncEnabled = false;
+    int targetFPS       = DEFAULT_TARGET_FPS;
+    float deltaTime     = (float)(1.0 / DEFAULT_TARGET_FPS);
     Uint64 currentTicks;
     Uint64 lastTicks;
-    double targetFrameTime;
+    double measuredFrameTime;
     double performanceFrequency;
     double accumulatedTime;
 
@@ -31,7 +33,11 @@ class Frame {
     void init();
     void calculateDeltaTime();
     void accumulateTime(const std::function<void()>& updateFunction);
-    void setTargetFPS(int newTargetFPS);
+    void renderFrame(SDL_Renderer* renderer);
+
     int getTargetFPS() const;
     float getDeltaTime() const;
+    void setTargetFPS(int newTargetFPS);
+    void enableVSync(SDL_Renderer* renderer);
+    void disableVSync(SDL_Renderer* renderer);
 };
