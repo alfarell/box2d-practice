@@ -9,7 +9,7 @@
 struct SquareProperties : public ObjectProperties {
     float width;
     float height;
-    b2ShapeDef shapeDef;
+    b2ShapeDef* shapeDef;
 };
 
 class Square : public Object {

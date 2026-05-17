@@ -11,9 +11,7 @@ App::~App() {
 bool App::init() {
     this->setDefaultBackgroundColor(0xFFFFFFFF);
 
-    b2WorldDef worldDef = b2DefaultWorldDef();
-    worldDef.gravity    = b2Vec2{0.0f, 9.8f};
-    this->worldId       = b2CreateWorld(&worldDef);
+    this->physics.init();
 
     SDL_FRect groundRect = {};
     groundRect.x         = (this->window->getWidth() / 2) - (900.0f / 2);
@@ -22,6 +20,7 @@ bool App::init() {
     groundRect.h         = 100.0f;
 
     b2BodyDef bodyDef             = b2DefaultBodyDef();
+    bodyDef.type                  = b2_staticBody;
     bodyDef.position              = b2Vec2{groundRect.x + (groundRect.w / 2),
                                            groundRect.y + (groundRect.h / 2)};
     b2ShapeDef shapeDef           = b2DefaultShapeDef();
@@ -30,9 +29,9 @@ bool App::init() {
     SquareProperties groundProperies = {};
     groundProperies.name             = "Ground";
     groundProperies.tags             = {"ground", "static"};
-    groundProperies.worldId          = &this->worldId;
+    groundProperies.worldId          = this->physics.getWorldId();
     groundProperies.bodyDef          = &bodyDef;
-    groundProperies.shapeDef         = shapeDef;
+    groundProperies.shapeDef         = &shapeDef;
     groundProperies.width            = groundRect.w;
     groundProperies.height           = groundRect.h;
 
@@ -47,10 +46,9 @@ void App::onEvent(SDL_Event* event) {
 }
 
 void App::onSimulate() {
-    const auto simulate = [&]() {
-        b2World_Step(worldId, Frame::Get().getDeltaTime(), 8);
+    const auto simulate = [this](float deltaTime) {
+        this->physics.step(deltaTime);
     };
-
     Frame::Get().accumulateTime(simulate);
 }
 
@@ -75,9 +73,9 @@ void App::onUpdate() {
         SquareProperties squareProperties = {};
         squareProperties.name             = "Box";
         squareProperties.tags             = {"box", "dynamic"};
-        squareProperties.worldId          = &this->worldId;
+        squareProperties.worldId          = this->physics.getWorldId();
         squareProperties.bodyDef          = &bodyDef;
-        squareProperties.shapeDef         = shapeDef;
+        squareProperties.shapeDef         = &shapeDef;
         squareProperties.width            = boxWidth;
         squareProperties.height           = boxHeight;
 
@@ -107,20 +105,8 @@ void App::onRender() {
 }
 
 void App::onDestroy() {
-    objectManager.onDestroy();
-
-    if (this->worldId.generation == b2_nullWorldId.generation &&
-        this->worldId.index1 == b2_nullWorldId.index1) {
-        return;
-    }
-
-    if (!b2World_IsValid(this->worldId)) {
-        SDL_Log("Box2D world is invalid.");
-        return;
-    }
-
-    b2DestroyWorld(worldId);
-    worldId = b2_nullWorldId;
+    this->objectManager.onDestroy();
+    this->physics.destroy();
 }
 
 void App::setDefaultBackgroundColor(Color color) {

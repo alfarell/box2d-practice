@@ -5,8 +5,8 @@ Square::Square(SDL_Renderer* renderer, SquareProperties properties)
     b2Polygon newPolygon =
         b2MakeBox(properties.width / 2, properties.height / 2);
 
-    this->shapeId = b2CreatePolygonShape(this->getBodyId(),
-                                         &properties.shapeDef, &newPolygon);
+    this->shapeId = b2CreatePolygonShape(this->getBodyId(), properties.shapeDef,
+                                         &newPolygon);
 }
 
 Square::~Square() {

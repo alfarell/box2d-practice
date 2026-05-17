@@ -32,7 +32,8 @@ class Frame {
 
     void init();
     void calculateDeltaTime();
-    void accumulateTime(const std::function<void()>& updateFunction);
+    void accumulateTime(
+        const std::function<void(float deltaTime)>& updateFunction);
     void renderFrame(SDL_Renderer* renderer);
 
     int getTargetFPS() const;

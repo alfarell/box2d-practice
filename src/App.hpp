@@ -13,6 +13,7 @@
 #include "System/Frame.hpp"
 #include "System/Input.hpp"
 #include "System/ObjectManager.hpp"
+#include "System/Physics.hpp"
 #include "System/Window.hpp"
 
 struct AppProperties {
@@ -21,12 +22,11 @@ struct AppProperties {
 
 class App {
    private:
-    Window* window;
-    AppProperties properties;
+    AppProperties properties{};
 
-    b2WorldId worldId;
-
-    ObjectManager objectManager;
+    Window* window = nullptr;
+    Physics physics{};
+    ObjectManager objectManager{};
 
    public:
     App(Window& window);

@@ -22,11 +22,12 @@ void Frame::calculateDeltaTime() {
         this->measuredFrameTime = MAX_DELTA_TIME;
 }
 
-void Frame::accumulateTime(const std::function<void()>& updateFunction) {
+void Frame::accumulateTime(
+    const std::function<void(float deltaTime)>& updateFunction) {
     this->accumulatedTime += this->measuredFrameTime;
 
     while (this->accumulatedTime >= this->deltaTime) {
-        updateFunction();
+        updateFunction(this->deltaTime);
         this->accumulatedTime -= this->deltaTime;
     }
 }

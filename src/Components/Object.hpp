@@ -14,7 +14,7 @@ class ObjectManager;
 struct ObjectProperties {
     std::string name;
     std::vector<std::string> tags;
-    b2WorldId* worldId;
+    const b2WorldId* worldId;
     b2BodyDef* bodyDef;
 };
 
@@ -27,9 +27,9 @@ class Object {
     std::vector<std::string> tags;
     bool active;
 
+    const b2WorldId* worldId;
     b2BodyId bodyId;
     b2ShapeId shapeId;
-    b2WorldId* worldId;
 
    protected:
     friend class ObjectManager;
