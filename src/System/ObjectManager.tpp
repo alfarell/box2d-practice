@@ -75,7 +75,7 @@ std::vector<T*> ObjectManager::getObjectsByTag(const std::string& tag) const {
     std::vector<T*> result;
 
     for (const auto& object : this->objects) {
-        if (object->getTag() != tag) continue;
+        if (!object->hasTag(tag)) continue;
 
         T* castedObject = dynamic_cast<T*>(object.get());
 

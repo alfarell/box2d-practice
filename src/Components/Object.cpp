@@ -58,8 +58,8 @@ void Object::removeTag(const std::string& tag) {
 }
 
 bool Object::hasTag(const std::string& tag) const {
-    return std::find(this->tags.begin(), this->tags.end(), tag) !=
-           this->tags.end();
+    auto it = std::find(this->tags.begin(), this->tags.end(), tag);
+    return it != this->tags.end();
 }
 
 bool Object::isActive() const {
