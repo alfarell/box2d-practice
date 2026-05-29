@@ -40,12 +40,14 @@ class ObjectManager {
     void removeObject(const uint32_t& id);
     void removeObjectsWithName(const std::string& name);
     void removeObjectsWithTag(const std::string& tag);
-    void removeInactiveObjects();
+    void removeDestroyedObjects();
 
     void destroy();
 
     void each(std::function<void(Object*)> callback) const;
     void each(std::function<void(const Object*)> callback) const;
+    void each(std::function<void(Object*, const ObjectManager*)> callback) const;
+    void each(std::function<void(const Object*, const ObjectManager*)> callback) const;
 };
 
 #include "ObjectManager.tpp"

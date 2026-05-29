@@ -10,6 +10,7 @@ T* ObjectManager::createObject(Args&&... args) {
     this->objects.push_back(std::move(object));
 
     T* ptr = static_cast<T*>(this->objects.back().get());
+    static_cast<Object*>(ptr)->onStart();
     return ptr;
 }
 

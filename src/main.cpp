@@ -4,6 +4,7 @@
 #include <SDL3/SDL_main.h>
 
 #include "App.hpp"
+#include "Helpers/OperatorOverloadings.hpp"
 #include "System/Frame.hpp"
 #include "System/Input.hpp"
 #include "System/Window.hpp"

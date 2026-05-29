@@ -9,6 +9,7 @@
 #include "Components/Object.hpp"
 #include "Components/Square.hpp"
 #include "Helpers/ConstructorMacros.hpp"
+#include "Helpers/OperatorOverloadings.hpp"
 #include "System/Color.hpp"
 #include "System/Frame.hpp"
 #include "System/Input.hpp"
@@ -44,6 +45,8 @@ class App {
     void onDestroy();
 
    private:
+    void onCollision();
+    void onContact();
     void setDefaultBackgroundColor(Color color);
     void renderDefaultBackground();
 };

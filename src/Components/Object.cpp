@@ -6,12 +6,13 @@ Object::Object(SDL_Renderer* renderer, ObjectProperties properties)
     : renderer(renderer),
       worldId(properties.worldId),
       name(properties.name),
-      tags(properties.tags),
-      active(true) {
+      tags(properties.tags) {
     this->bodyId = b2CreateBody(*worldId, properties.bodyDef);
 }
 
 Object::~Object() {
+	this->onDestroy();
+
     if (this->bodyId.index1 == b2_nullBodyId.index1 &&
         this->bodyId.world0 == b2_nullBodyId.world0 &&
         this->bodyId.generation == b2_nullBodyId.generation) {
@@ -66,11 +67,15 @@ bool Object::isActive() const {
     return this->active;
 }
 
-void Object::activate() {
-    this->active = true;
+void Object::show() {
+    this->visible = true;
 }
 
-void Object::deactivate() {
+void Object::hide() {
+    this->visible = false;
+}
+
+void Object::destroy() {
     this->active = false;
 }
 
@@ -109,7 +114,19 @@ const b2Polygon Object::getPolygon() const {
     return b2Shape_GetPolygon(this->shapeId);
 }
 
+void Object::onStart() {
+    // Default implementation does nothing
+}
+
 void Object::onEvent(SDL_Event* event) {
+    // Default implementation does nothing
+}
+
+void Object::onCollision(Object* other) {
+    // Default implementation does nothing
+}
+
+void Object::onContact(Object* other) {
     // Default implementation does nothing
 }
 
@@ -151,4 +168,8 @@ void Object::onRender() {
                            materialColor.b, materialColor.a);
     SDL_RenderLines(this->renderer, sdlVertices.data(),
                     static_cast<unsigned int>(sdlVertices.size()));
+}
+
+void Object::onDestroy() {
+    // Default implementation does nothing
 }

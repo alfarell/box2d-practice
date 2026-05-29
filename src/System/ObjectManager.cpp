@@ -48,11 +48,25 @@ void ObjectManager::each(std::function<void(const Object*)> callback) const {
     }
 }
 
+void ObjectManager::each(
+    std::function<void(Object*, const ObjectManager*)> callback) const {
+    for (const auto& object : this->objects) {
+        callback(object.get(), this);
+    }
+}
+
+void ObjectManager::each(
+    std::function<void(const Object*, const ObjectManager*)> callback) const {
+    for (const auto& object : this->objects) {
+        callback(object.get(), this);
+    }
+}
+
 void ObjectManager::destroy() {
     this->objects.clear();
 }
 
-void ObjectManager::removeInactiveObjects() {
+void ObjectManager::removeDestroyedObjects() {
     auto cb = [](const std::unique_ptr<Object>& obj) {
         return !obj->isActive();
     };

@@ -25,7 +25,8 @@ class Object {
     uint32_t id      = 0;
     std::string name = "";
     std::vector<std::string> tags{};
-    bool active = false;
+    bool visible = true;
+    bool active = true;
 
     const b2WorldId* worldId = nullptr;
     b2BodyId bodyId{};
@@ -43,9 +44,13 @@ class Object {
     NON_COPYABLE(Object)
     NON_MOVABLE(Object)
 
+    virtual void onStart();
     virtual void onEvent(SDL_Event* event);
+    virtual void onCollision(Object* other);
+    virtual void onContact(Object* other);
     virtual void onUpdate();
     virtual void onRender();
+	virtual void onDestroy();
 
     uint32_t getId() const;
     std::string getName() const;
@@ -55,8 +60,9 @@ class Object {
     void addTag(const std::string& tag);
     void removeTag(const std::string& tag);
     bool hasTag(const std::string& tag) const;
-    void activate();
-    void deactivate();
+    void show();
+    void hide();
+    void destroy();
 
     virtual b2BodyId getBodyId() const;
     virtual b2ShapeId getShapeId() const;
